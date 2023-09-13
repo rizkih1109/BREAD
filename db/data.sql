@@ -12,4 +12,3 @@ INSERT INTO data (name, height, weight, birthdate, married) VALUES
 ('Wildan', '165', '72.1', "2000-12-17", false),
 ('Aziz', '171', '67.5', "2001-12-12", true),
 ('Himawan', '161', '68.6', "1998-03-30", false);
-

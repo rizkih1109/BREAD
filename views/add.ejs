@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/styles.css" />
     <title>BREAD (Browse, Read, Edit, Add, Delete) and Pagination</title>
 </head>
+
 <body>
     <div>
         <div class="head">
             <h1>Adding Data</h1>
         </div>
-        <form action="/" method="get">
+        <form action="/add" method="post">
             <div>
                 <label for="name">Name</label>
                 <input type="text" name="name" placeholder="Insert your name" required /><br>
@@ -22,22 +24,23 @@
             </div>
             <div>
                 <label for="weight">Weight</label>
-                <input type="number" step="0.01" name="weight" placeholder="insert your weight"/><br>
+                <input type="number" step="0.01" name="weight" placeholder="insert your weight" /><br>
             </div>
             <div class="date2">
                 <label for="birthdate">Birth Date</label>
                 <input type="date" name="birthdate" />
             </div>
             <div>
-                    <legend>Is Married</legend>
+                <legend>Is Married</legend>
                     <input type="radio" id="false" name="married" value="0">
                     <label for="false">Not Yet</label><br>
                     <input type="radio" id="true" name="married" value="1">
                     <label for="true">Yes</label>
-                </div>
+            </div>
             <div class="foot2">
                 <button type="submit" class="b5">Save</button><a href="/" class="btn">Back</a>
             </div>
         </form>
 </body>
+
 </html>

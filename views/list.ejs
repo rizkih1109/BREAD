@@ -16,9 +16,10 @@
         </div>
         <div>
             <form action="/" method="get">
+                <input type="hidden" name="page" value="1">
                 <div>
                     <label for="name">Name</label>
-                    <input type="text" name="name" placeholder="Insert your name" value="<%= query.name %>"/><br>
+                    <input type="text" name="name" placeholder="Insert your name" value="<%= query.name %>" /><br>
                 </div>
                 <div>
                     <label for="height">Height</label>
@@ -39,23 +40,49 @@
                 </div>
                 <div>
                     <label for="married">Is Married</label>
-                    <select name="married">
-                        <option disabled selected> Have you married? </option><br>
-                        <option value="true">Yes</option>
-                        <option value="false">Not Yet</option>
-                    </select>
+                    <% if(query.married=='1' ) { %>
+                        <select name="married">
+                            <option disabled> -select married- </option><br>
+                            <option value="1" selected>Yes</option>
+                            <option value="0">Not Yet</option>
+                        </select>
+                        <% } else if (query.married=='0' ) { %>
+                            <select name="married">
+                                <option disabled> -select married- </option><br>
+                                <option value="1">Yes</option>
+                                <option value="0" selected>Not Yet</option>
+                            </select>
+                            <% } else { %>
+                                <select name="married">
+                                    <option disabled selected> -select married- </option><br>
+                                    <option value="1">Yes</option>
+                                    <option value="0">Not Yet</option>
+                                </select>
+                                <% } %>
                 </div>
                 <div style="display: block;">
                     <legend>Operation</legend>
                     <div>
-                        <input type="radio" id="or" name="mode" value="or" checked>
-                        <label for="or" style="width: 30px; margin-left: 0px;">OR</label>
-                        <input type="radio" id="and" name="mode" value="and">
-                        <label for="and" style="width: 30px; margin-left: 0px;">AND</label>
+                        <% if(query.mode=='OR' ) { %>
+                            <input type="radio" id="or" name="mode" value="OR" checked>
+                            <label for="or" style="width: 30px; margin-left: 0px;">OR</label>
+                            <input type="radio" id="and" name="mode" value="AND">
+                            <label for="and" style="width: 30px; margin-left: 0px;">AND</label>
+                            <% } else if(query.mode=='AND' ) { %>
+                                <input type="radio" id="or" name="mode" value="OR">
+                                <label for="or" style="width: 30px; margin-left: 0px;">OR</label>
+                                <input type="radio" id="and" name="mode" value="AND" checked>
+                                <label for="and" style="width: 30px; margin-left: 0px;">AND</label>
+                                <% } else { %>
+                                    <input type="radio" id="or" name="mode" value="OR" checked>
+                                    <label for="or" style="width: 30px; margin-left: 0px;">OR</label>
+                                    <input type="radio" id="and" name="mode" value="AND">
+                                    <label for="and" style="width: 30px; margin-left: 0px;">AND</label>
+                                    <% } %>
                     </div>
                 </div>
                 <div style="clear: both;">
-                    <button type="submit">Search</button><a href="/" class="btn">Reset</a>
+                    <button type="submit" class="b1">Search</button><a href="/" class="btn">Reset</a>
                 </div>
             </form>
         </div>
@@ -77,7 +104,7 @@
                         <% married="Yes" %>
                             <tr>
                                 <td>
-                                    <%= index + 1 %>
+                                    <%= index + offset + 1 %>
                                 </td>
                                 <td>
                                     <%= item.name %>
@@ -94,15 +121,15 @@
                                 <td>
                                     <%= married %>
                                 </td>
-                                <td><a href="/edit/<%= item.id %>" class="b2">Update</a><a href="/delete/<%= item.id %>"
-                                        onclick="return confirmation('<%= item.name %>')" class="b3">Delete</a></td>
+                                <td><a href="/edit/<%= item.id %>" class="b2">Update</a><button class="b3"
+                                        onclick="on('<%= item.id %>', '<%= item.name %>')">Delete</button></td>
                             </tr>
                             <% } %>
                                 <% if (!item.married) {%>
                                     <% married="Not Yet" %>
                                         <tr>
                                             <td>
-                                                <%= index + 1 %>
+                                                <%= index + offset + 1 %>
                                             </td>
                                             <td>
                                                 <%= item.name %>
@@ -119,17 +146,64 @@
                                             <td>
                                                 <%= married %>
                                             </td>
-                                            <td><a href="/edit/<%= item.id %>" class="b2">Update</a><a
-                                                    href="/delete/<%= item.id %>"
-                                                    onclick="return confirmation('<%= item.name %>')" class="b3">Delete</a></td>
+                                            <td><a href="/edit/<%= item.id %>" class="b2">Update</a><button class="b3"
+                                                    onclick="on('<%= item.id %>', '<%= item.name %>')">Delete</button></td>
                                         </tr>
                                         <% } %>
                                             <% }) %>
             </tbody>
         </table>
         <div class="foot">
-            <a href="add" class="b4">Add</a>
+            <div style="display: inline-block;">
+                <a href="add" class="b4">Add</a>
+            </div>
+            <div class="pages">
+                <% if(page == '1') { %>
+                    <a href="<%= url.replace(`page=${page}`, `page=${page}`) %>">&laquo;</a>
+                <% } else { %>
+                    <a href="<%= url.replace(`page=${page}`, `page=${page - 1}`) %>">&laquo;</a>
+                <% } %>
+                <% for(let i =1; i <= pages; i++) { %>
+                    <% if(url.includes("page=")) { %>
+                        <% if (i == page) { %>
+                            <a href="<%= url.replace(`page=${page}`, `page=${i}`) %>" class="active"><%= i %></a>
+                        <% } else { %>
+                            <a href="<%= url.replace(`page=${page}`, `page=${i}`) %>"><%= i %></a>
+                        <% } %>
+                    <% } else { %>
+                        <% if (i == page) { %>
+                            <a href="/?page=<%= i %>"><%= i %></a>
+                        <% } else { %>
+                            <a href="/?page=<%= i %>"><%= i %></a>
+                        <% } %>
+                    <% } %>
+                <% } %>
+                <% if(page == pages) { %>
+                    <a href="<%= url.replace(`page=${page}`, `page=${page}`) %>">&raquo;</a>
+                <% } else { %>
+                    <a href="<%= url.replace(`page=${page}`, `page=${(page * 1) + 1}`) %>">&raquo;</a>
+                <% } %>
+            </div>
         </div>
+    </div>
+    <div class="notif" id="notif">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Delete Confirmation</h4>
+                    <p class="close" onclick="off()">&times;</p>
+                </div>
+                <div class="modal-body">
+                    <p id="ask"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="b6" onclick="off()">No</button>
+                    <a id="nextdelete" class="btn1" href="#">Yes</a>
+                </div>
+     
+            </div>
+        </div>
+    </div>
     </div>
 </body>
 
