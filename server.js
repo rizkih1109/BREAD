@@ -16,49 +16,59 @@ app.get('/', (req, res) => {
     const { page = 1, name, height, weight, startdate, enddate, married, mode } = req.query
     const queries = []
     const params = []
+    const paramscount = []
     const limit = 5
     const offset = (page - 1) * 5
 
     if (name) {
         queries.push(`name like '%' || ? || '%'`)
         params.push(name)
+        paramscount.push(name)
     }
 
     if (height) {
         queries.push('height = ?')
         params.push(height)
+        paramscount.push(height)
     }
 
     if (weight) {
         queries.push('weight = ?')
         params.push(weight)
+        paramscount.push(weight)
     }
 
     if (startdate && enddate) {
         queries.push(`birthdate BETWEEN ? and ?`)
         params.push(startdate, enddate)
+        paramscount.push(startdate, enddate)
     } else if (startdate) {
         queries.push('birthdate >= ?')
         params.push(startdate)
+        paramscount.push(startdate)
     } else if (enddate) {
         queries.push('birthdate <= ?')
         params.push(enddate)
+        paramscount.push(enddate)
     }
 
     if (married) {
         queries.push('married = ?')
         params.push(married)
+        paramscount.push(married)
     }
 
     let sql = 'SELECT * FROM data'
+    let sqlcount = 'SELECT COUNT(*) AS total FROM data'
     if (queries.length > 0) {
-        sql += ` where ${queries.join(` ${mode} `)}`
+        sql += ` WHERE ${queries.join(` ${mode} `)}`
+        sqlcount += ` WHERE ${queries.join(` ${mode} `)}`
     }
 
     sql += ` LIMIT ? OFFSET ?`
     params.push(limit, offset)
 
-    db.get('SELECT COUNT(*) AS total FROM data', (err, data) => {
+    db.get(sqlcount, paramscount, (err, data) => {
         const total = data.total
         const pages = Math.ceil(total / limit)
 
